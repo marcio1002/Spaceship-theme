@@ -13,12 +13,17 @@ function Write-Theme {
   $ForeColor = $sl.Colors.SessionInfoForegroundColor
   $BackColor = $sl.Colors.SessionInfoBackgroundColor
 
-  if($user -and $computer) {
-    $prompt += Write-Prompt -Object "$user@$computer" -ForegroundColor $sl.Colors.UserInfoForegroundColor -BackgroundColor $sl.Colors.UserInfoBackgroundColor
+  if($user) {
+    $prompt += Write-Prompt -Object "$user " -ForegroundColor $sl.Colors.UserInfoForegroundColor -BackgroundColor $BackColor
+  } else {
+    $user = Get-ComputerName
+    $prompt += Write-Prompt -Object "$($user.ToLower()) " -ForegroundColor $sl.Colors.UserInfoForegroundColor -BackgroundColor $BackColor
   }
   
-  $path +=  (Get-ShortPath -dir $pwd)
-  $prompt += Write-Prompt -Object " $path " -ForegroundColor $sl.Colors.PromptForegroundColor -BackgroundColor $sl.Colors.PromptBackgroundColor
+  $path = Split-Path $pwd -Leaf
+
+  $prompt += Write-Prompt -Object " IN " -ForegroundColor $sl.Colors.PromptSymbolColor
+  $prompt += Write-Prompt -Object "$path " -ForegroundColor $sl.Colors.PromptForegroundColor -BackgroundColor $sl.Colors.PromptBackgroundColor
 
   if ($status = Get-GitStatus) {
     $prompt += Write-Prompt -Object " $($sl.PromptSymbols.GitSymbol) " -ForegroundColor $sl.Colors.PromptSymbolColor
@@ -74,8 +79,7 @@ $sl.PromptSymbols.Blur2Symbol = [char]::ConvertFromUtf32(0x2592)
 $sl.PromptSymbols.Blur3Symbol = [char]::ConvertFromUtf32(0x2593)
 $sl.PromptSymbols.GitSymbol = [char]::ConvertFromUtf32(0x21DE)
 $sl.PromptSymbols.GitSymbol2 = [char]::ConvertFromUtf32(0x219D)
-$sl.Colors.UserInfoForegroundColor = [ConsoleColor]::Black
-$sl.Colors.UserInfoBackgroundColor = [ConsoleColor]::DarkBlue
+$sl.Colors.UserInfoForegroundColor = [ConsoleColor]::DarkBlue
 $sl.Colors.PromptForegroundColor = [ConsoleColor]::Black
 $sl.Colors.PromptBackgroundColor = [ConsoleColor]::Yellow
 $sl.Colors.PromptSymbolColor = [ConsoleColor]::White
